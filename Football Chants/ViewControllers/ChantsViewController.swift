@@ -35,7 +35,7 @@ class ChantsViewController: UIViewController {
     
     private func addSubview() {
         view.addSubview(tableView)
-            }
+    }
     
     private func setup() {
         tableView.dataSource = self
