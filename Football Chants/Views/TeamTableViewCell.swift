@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol TeamTableViewCellDelegate: AnyObject {
+    func didTapPlayback(for team: Team)
+}
+
 class TeamTableViewCell: UITableViewCell {
 
     static let cellId = "TeamTableViewCell"
@@ -77,22 +81,38 @@ class TeamTableViewCell: UITableViewCell {
         return lbl
     }()
     
+    private weak var delegate: TeamTableViewCellDelegate?
+    private var team: Team?
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         containerView.layer.cornerRadius = 10
     }
     
-    func configure() {
-        containerView.backgroundColor = TeamType.arsenal.background
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        self.team = nil
+        self.delegate = nil
+        self.contentView.subviews.forEach { $0.removeFromSuperview()}
+    }
+    
+    func configure(with item: Team, delegate: TeamTableViewCellDelegate?) {
         
-        badgeImgVw.image = TeamType.arsenal.badge
-        playbackBtn.setImage(UIImage(systemName: "play.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32)), for: .normal)
+        self.team = item
+        self.delegate = delegate
+        
+        playbackBtn.addTarget(self, action: #selector(didTapPlayback), for: .touchUpInside)
+        
+        containerView.backgroundColor = item.id.background
+        
+        badgeImgVw.image = item.id.badge
+        playbackBtn.setImage(item.isPlaying ? Assets.pause : Assets.play, for: .normal)
         
         
-        nameLbl.text = "Arsenal"
-        foundedLbl.text = "1890"
-        jobLbl.text = "Coach manager: Mikel Arteta"
-        infoLbl.text = "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
+        nameLbl.text = item.name
+        foundedLbl.text = item.founded
+        jobLbl.text = "Current \(item.manager.job.rawValue): \(item.manager.name)"
+        infoLbl.text = item.info
         
         self.contentView.addSubview(containerView)
         
@@ -127,5 +147,12 @@ class TeamTableViewCell: UITableViewCell {
             playbackBtn.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
             
         ])
+        
+    }
+    
+    @objc func didTapPlayback() {
+        if let team = team {
+            delegate?.didTapPlayback(for: team)
+        }
     }
 }
