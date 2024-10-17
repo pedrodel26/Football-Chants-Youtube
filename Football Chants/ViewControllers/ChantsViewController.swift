@@ -26,6 +26,7 @@ class ChantsViewController: UIViewController {
     }()
     
     private lazy var teamsViewModel = TeamsViewModel()
+    private lazy var audioManagerVieModel = AudioManagerViewModel()
     
     
     //MARK: - Lifecycle
@@ -59,9 +60,6 @@ class ChantsViewController: UIViewController {
     }
 }
 
-#Preview {
-    ChantsViewController()
-}
 
 extension ChantsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -79,6 +77,8 @@ extension ChantsViewController: UITableViewDataSource {
 
 extension ChantsViewController: TeamTableViewCellDelegate {
     func didTapPlayback(for team: Team) {
-        
+        audioManagerVieModel.playback(team)
+        teamsViewModel.tooglePlayback(for: team)
+        tableView.reloadData()
     }
 }

@@ -42,9 +42,6 @@ class TestViewController: UIViewController {
     }
 }
 
-#Preview {
-    TestViewController()
-}
 
 extension TestViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
